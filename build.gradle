@@ -1,0 +1,104 @@
+plugins {
+    id("groovy") 
+    id("io.micronaut.application") version "4.5.0"
+    id("com.gradleup.shadow") version "8.3.6"
+    id("io.micronaut.test-resources") version "4.5.0"
+    id("io.micronaut.aot") version "4.5.0"
+    id 'org.asciidoctor.jvm.convert' version '4.0.4'
+    id 'org.asciidoctor.jvm.revealjs' version '4.0.4'
+    id 'org.asciidoctor.jvm.gems' version '4.0.4'
+}
+
+version = "0.1"
+group = "com.incsteps"
+
+repositories {
+    mavenCentral()
+    ruby.gems("https://rubygems.org/")
+}
+
+dependencies {
+    annotationProcessor("io.micronaut.data:micronaut-data-processor")
+    annotationProcessor("io.micronaut:micronaut-http-validation")
+    annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
+    implementation("io.micronaut.data:micronaut-data-jdbc")
+    implementation("io.micronaut.serde:micronaut-serde-jackson")
+    implementation("io.micronaut.sql:micronaut-jdbc-hikari")
+    compileOnly("io.micronaut:micronaut-http-client")
+    runtimeOnly("ch.qos.logback:logback-classic")
+    runtimeOnly("org.postgresql:postgresql")
+    testImplementation("io.micronaut:micronaut-http-client")
+    asciidoctorGems 'rubygems:asciidoctor-revealjs:5.2.0'
+    annotationProcessor("io.micronaut.openapi:micronaut-openapi")
+    implementation("io.swagger.core.v3:swagger-annotations")
+
+
+    implementation "dev.langchain4j:langchain4j:${langchainVersion}"
+    implementation "dev.langchain4j:langchain4j-embeddings:${langchainVersion}"
+    implementation("dev.langchain4j:langchain4j-embeddings-all-minilm-l6-v2:${langchainVersion}")
+
+    implementation "dev.langchain4j:langchain4j-pgvector:${langchainVersion}"
+    implementation "dev.langchain4j:langchain4j-document-parser-apache-tika:${langchainVersion}"
+
+
+    implementation "dev.langchain4j:langchain4j-ollama:${langchainVersion}"
+    implementation "dev.langchain4j:langchain4j-google-ai-gemini:${langchainVersion}"
+}
+
+
+application {
+    mainClass = "com.incsteps.Application"
+}
+java {
+    sourceCompatibility = JavaVersion.toVersion("17")
+    targetCompatibility = JavaVersion.toVersion("17")
+}
+
+
+graalvmNative.toolchainDetection = false
+
+micronaut {
+    runtime("netty")
+    testRuntime("spock2")
+    processing {
+        incremental(true)
+        annotations("com.incsteps.*")
+    }
+    aot {
+        // Please review carefully the optimizations enabled below
+        // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
+        optimizeServiceLoading = false
+        convertYamlToJava = false
+        precomputeOperations = true
+        cacheEnvironment = true
+        optimizeClassLoading = true
+        deduceEnvironment = true
+        optimizeNetty = true
+        replaceLogbackXml = true
+    }
+}
+
+asciidoctorj {
+    jrubyVersion = '9.4.9.0'
+    modules {
+        diagram.use()
+        diagram.version '2.2.1'
+    }
+}
+
+revealjs {
+    version = '5.1.0'
+
+    templateGitHub {
+        organisation = 'hakimel'
+        repository = 'reveal.js'
+        tag = '5.1.0'
+    }
+}
+
+asciidoctorRevealJs{
+    sourceDir "src/docs/slides"
+    baseDirFollowsSourceDir()
+}
+
+build.dependsOn(asciidoctorRevealJs, asciidoctor)

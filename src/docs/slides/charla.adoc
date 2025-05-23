@@ -1,0 +1,188 @@
+= Langchain4j: No todo es Python en la AI
+
+== Speaker
+
+Jorge
+
+__Disclaimer__
+
+[.columns]
+== Guion
+
+[.column]
+--
+- Introducción y conceptos básicos
+- Langchain4j
+- Vectorización y búsqueda semántica
+- Demo 1
+--
+
+[.column]
+--
+- Modelos LLM
+- Demo 2
+- Contexto y RAG
+- Demo 3
+- Conversando (Memory)
+- Demo 4
+--
+
+[.column]
+--
+- Agentes
+- Demo 5
+- Tools
+- Demo 6
+- MCP
+- Demo 7
+--
+
+== IA Generativa
+
+- Breve contexto sobre el auge de la IA generativa y los LLMs (Large Language Models).
+- Casos de uso relevantes para desarrolladores (chatbots, asistentes, generación de código, etc.).
+- Langchain4j facilita la integración de estas tecnologías en Java.
+
+
+== ¿Qué es Langchain4j?
+
+- Framework de código abierto para construir aplicaciones impulsadas por LLMs en Java.
+- principales objetivos: simplicidad, modularidad y extensibilidad.
+- inspiración en Langchain (Python).
+
+
+[.columns]
+== Vectorización
+
+- Introducción al concepto de "embeddings" o vectores semánticos.
+- el texto se transforma en representaciones numéricas.
+- la similitud entre dos textos utilizando vectores (ej. distancia coseno).
+- búsqueda semántica, sistemas de recomendación, etc.
+
+=== Demo 1
+
+[source]
+----
+implementation
+    "dev.langchain4j:langchain4j"
+implementation
+    "dev.langchain4j:langchain4j-embeddings-all-minilm-l6-v2"
+----
+
+=== Embedding
+
+[source]
+----
+txt = "Hola amiguis";
+model = new AllMiniLmL6V2EmbeddingModel();
+embedding1 = model.embed(txt).content();
+embedding1.vector(); // float[]
+----
+
+
+== Almacenamiento de Vectores
+
+- (ChromaDB, CosmosDB, PostgreSQL, etc.).
+- PostgreSQL extension pgvector
+- Ver docker-compose.yml
+
+
+=== Demo 2
+
+[source]
+----
+implementation "dev.langchain4j:langchain4j-pgvector"
+// cambiar pgvector por otros
+----
+
+
+=== Embedding Store
+
+[source]
+----
+EmbeddingStore<TextSegment> embeddingStore;
+
+segment = TextSegment.from("una cadena",
+    Metadata.metadata("SourceId", "1")
+);
+embedding = embeddingModel.embed(segment).content();
+
+embeddingStore.add(embedding, segment);
+----
+
+
+==  Los Modelos de Lenguaje (LLMs)
+
+- LLMs (modelos basados en transformers entrenados con grandes cantidades de texto).
+- ejemplos populares (GPT-3.5, GPT-4, modelos open-source como Mistral).
+- (Langchain4j proporciona abstracciones para interactuar con diferentes LLMs).
+
+=== Demo 3
+
+[source]
+----
+implementation "dev.langchain4j:langchain4j-ollama"
+// cambiar ollama por el correspondiente
+----
+
+=== Ask
+
+[source]
+----
+ChatModel chatModel;
+response = chatModel.chat(question);
+----
+
+
+== Memory: Conversaciones con Estado
+
+- necesidad de la memoria para construir aplicaciones conversacionales coherentes.
+- Tipos de memoria en Langchain4j: buffer de conversación, memoria de ventana, etc.
+
+=== Demo 4
+
+
+[source]
+----
+chatMemory.add(UserMessage.from(question));
+response = chatModel.chat(chatMemory.messages()).aiMessage();
+chatMemory.add(response);
+----
+
+
+== Agents: Tomando Decisiones
+
+- sistemas capaces de tomar decisiones y ejecutar acciones basadas en la entrada del usuario y las herramientas disponibles.
+
+== Demo 5
+
+== (RAG): El Poder del Contexto
+
+- la importancia de proporcionar contexto.
+- Introducción al concepto de "Retrieval-Augmented Generation" (RAG).
+- RAG: buscar e inyectar información
+- Langchain4j facilita la creación de sistemas de recuperación.
+
+=== Demo 6
+
+[source]
+----
+AiServices.builder(Demo6Assistant.class)
+    .chatLanguageModel(chatModel)
+    .chatMemory(chatMemory)
+    .contentRetriever(contentRetriever)
+    .build();
+----
+
+
+== Tools: Enriqueciendo el LLM
+
+- Ejemplos de herramientas: búsqueda web, calculadoras, acceso a APIs.
+
+== MCP: abriendo la puerta al LLM
+
+- propuesta de Antrop , aceptada por los demas
+
+
+== Preguntas y Respuestas
+
