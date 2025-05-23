@@ -35,7 +35,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3.0.1
         with:
-          path: ./build/docs/asciidocRevalJs
+          path: ./build/docs/asciidocRevealJs
 
   publish-ghpages:
     needs: build
