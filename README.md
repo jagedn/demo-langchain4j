@@ -1,4 +1,4 @@
-Readme.md para el proyecto de demostración de langchain4j:
+demo-langchain4j:
 ======================================================
 
 ### Introducción
